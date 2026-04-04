@@ -1,5 +1,5 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 800
+#ifdef __GLASGOW_HASKELL__
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
 {-# LANGUAGE Safe #-}
@@ -34,7 +34,7 @@ import Data.Semigroup (Semigroup((<>)))
 import Data.Bifoldable (Bifoldable(..))
 import Data.Bitraversable (Bitraversable(..))
 import Prelude hiding (null, length)
-#if __GLASGOW_HASKELL__ >= 800
+#ifdef __GLASGOW_HASKELL__
 import Data.Data
 #endif
 #ifdef GENERICS
@@ -44,7 +44,7 @@ import GHC.Generics
 -- | Constant functor.
 newtype Constant a b = Constant { getConstant :: a }
     deriving (Eq, Ord
-#if __GLASGOW_HASKELL__ >= 800
+#ifdef __GLASGOW_HASKELL__
         , Data
 #endif
 #ifdef GENERICS
