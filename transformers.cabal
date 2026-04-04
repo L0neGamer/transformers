@@ -37,6 +37,14 @@ extra-doc-files:
     images/bind-ReaderT.svg
     images/bind-WriterT.svg
 cabal-version: 1.18
+tested-with:
+  GHC == 9.12
+  GHC == 9.10
+  GHC == 9.8
+  GHC == 9.2
+  GHC == 8.10
+  GHC == 7.10
+  MHS == 0.14
 
 source-repository head
   type: git
