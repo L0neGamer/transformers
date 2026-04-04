@@ -64,9 +64,7 @@ import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix
 import Control.Monad.Signatures
-#if !MIN_VERSION_base(4,8,0)
 import Data.Monoid
-#endif
 #ifdef GENERICS
 import GHC.Generics
 #endif

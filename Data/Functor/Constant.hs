@@ -29,13 +29,9 @@ import Data.Functor.Contravariant
 
 import Control.Applicative
 import Data.Foldable
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Monoid (Monoid(..))
 import Data.Traversable (Traversable(traverse))
-#endif
-#if MIN_VERSION_base(4,8,0)
 import Data.Bifunctor (Bifunctor(..))
-#endif
 #if (MIN_VERSION_base(4,9,0)) && !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup (Semigroup((<>)))
 #endif
@@ -109,10 +105,8 @@ instance Functor (Constant a) where
 instance Foldable (Constant a) where
     foldMap _ (Constant _) = mempty
     {-# INLINE foldMap #-}
-#if MIN_VERSION_base(4,8,0)
     null (Constant _) = True
     length (Constant _) = 0
-#endif
 
 instance Traversable (Constant a) where
     traverse _ (Constant x) = pure (Constant x)
@@ -139,13 +133,11 @@ instance (Monoid a) => Monoid (Constant a b) where
     {-# INLINE mappend #-}
 #endif
 
-#if MIN_VERSION_base(4,8,0)
 instance Bifunctor Constant where
     first f (Constant x) = Constant (f x)
     {-# INLINE first #-}
     second _ (Constant x) = Constant x
     {-# INLINE second #-}
-#endif
 
 #if MIN_VERSION_base(4,10,0)
 instance Bifoldable Constant where

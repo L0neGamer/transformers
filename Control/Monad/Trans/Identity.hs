@@ -45,9 +45,7 @@ import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix (MonadFix(mfix))
 import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Foldable
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Traversable (Traversable(traverse))
-#endif
 import Prelude hiding (foldr, foldr1, foldl, foldl1, null, length)
 #ifdef GENERICS
 import GHC.Generics
@@ -95,10 +93,8 @@ instance (Foldable f) => Foldable (IdentityT f) where
     {-# INLINE foldr1 #-}
     foldl1 f (IdentityT t) = foldl1 f t
     {-# INLINE foldl1 #-}
-#if MIN_VERSION_base(4,8,0)
     null (IdentityT t) = null t
     length (IdentityT t) = length t
-#endif
 
 #if MIN_VERSION_base(4,18,0)
 instance (Foldable1 m) => Foldable1 (IdentityT m) where

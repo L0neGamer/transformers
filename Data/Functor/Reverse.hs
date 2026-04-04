@@ -36,9 +36,7 @@ import Control.Monad
 import qualified Control.Monad.Fail as Fail
 #endif
 import Data.Foldable
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Traversable (Traversable(traverse))
-#endif
 import Data.Monoid
 #ifdef GENERICS
 import GHC.Generics
@@ -129,10 +127,8 @@ instance (Foldable f) => Foldable (Reverse f) where
     {-# INLINE foldr1 #-}
     foldl1 f (Reverse t) = foldr1 (flip f) t
     {-# INLINE foldl1 #-}
-#if MIN_VERSION_base(4,8,0)
     null (Reverse t) = null t
     length (Reverse t) = length t
-#endif
 
 #if MIN_VERSION_base(4,18,0)
 -- | Fold from right to left.

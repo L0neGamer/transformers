@@ -34,9 +34,7 @@ import GHC.Generics
 import Prelude hiding (foldr, foldr1, foldl, foldl1, null, length)
 import Control.Applicative
 import Data.Foldable
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Traversable (Traversable(traverse, sequenceA))
-#endif
 
 -- | The same functor, but with an 'Applicative' instance that performs
 -- actions in the reverse order.
@@ -107,10 +105,8 @@ instance (Foldable f) => Foldable (Backwards f) where
     {-# INLINE foldr1 #-}
     foldl1 f (Backwards t) = foldl1 f t
     {-# INLINE foldl1 #-}
-#if MIN_VERSION_base(4,8,0)
     null (Backwards t) = null t
     length (Backwards t) = length t
-#endif
 
 #if MIN_VERSION_base(4,18,0)
 -- | Derived instance.

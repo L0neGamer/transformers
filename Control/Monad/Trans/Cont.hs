@@ -46,9 +46,7 @@ import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 import Data.Functor.Identity
 
-#if !(MIN_VERSION_base(4,8,0))
 import Control.Applicative
-#endif
 #if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
 #endif

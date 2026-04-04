@@ -75,9 +75,7 @@ import Control.Monad
 import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix
-#if !(MIN_VERSION_base(4,8,0))
 import Data.Monoid
-#endif
 #ifdef GENERICS
 import GHC.Generics
 #endif

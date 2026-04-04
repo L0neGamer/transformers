@@ -63,11 +63,9 @@ import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix
 import Control.Monad.Zip (MonadZip(mzipWith))
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Foldable (Foldable(foldMap))
 import Data.Monoid (Monoid(mempty, mappend))
 import Data.Traversable (Traversable(traverse))
-#endif
 #ifdef GENERICS
 import GHC.Generics
 #endif
