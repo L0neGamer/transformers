@@ -1,0 +1,6 @@
+
+packages: .
+
+program-options
+  ghc-options:
+    -Wall -Wredundant-constraints -Werror
