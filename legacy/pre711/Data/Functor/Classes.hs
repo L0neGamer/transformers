@@ -1,11 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE StandaloneDeriving #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Functor.Classes
@@ -70,9 +66,7 @@ import Control.Applicative (Const(Const))
 import Data.Functor.Identity (Identity(Identity))
 import Data.Monoid (mappend)
 import Data.Proxy (Proxy(Proxy))
-#if __GLASGOW_HASKELL__ >= 708
 import Data.Typeable
-#endif
 import Text.Show (showListWith)
 
 -- | Lifting of the 'Eq' class to unary type constructors.
@@ -85,9 +79,7 @@ class Eq1 f where
     -- the second.
     liftEq :: (a -> b -> Bool) -> f a -> f b -> Bool
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Eq1
-#endif
 
 -- | Lift the standard @('==')@ function through the type constructor.
 eq1 :: (Eq1 f, Eq a) => f a -> f a -> Bool
@@ -103,9 +95,7 @@ class (Eq1 f) => Ord1 f where
     -- the second.
     liftCompare :: (a -> b -> Ordering) -> f a -> f b -> Ordering
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Ord1
-#endif
 
 -- | Lift the standard 'compare' function through the type constructor.
 compare1 :: (Ord1 f, Ord a) => f a -> f a -> Ordering
@@ -124,9 +114,7 @@ class Read1 f where
     liftReadList :: (Int -> ReadS a) -> ReadS [a] -> ReadS [f a]
     liftReadList rp rl = readListWith (liftReadsPrec rp rl 0)
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Read1
-#endif
 
 -- | Read a list (using square brackets and commas), given a function
 -- for reading elements.
@@ -159,9 +147,7 @@ class Show1 f where
         [f a] -> ShowS
     liftShowList sp sl = showListWith (liftShowsPrec sp sl 0)
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Show1
-#endif
 
 -- | Lift the standard 'showsPrec' and 'showList' functions through the
 -- type constructor.
@@ -178,9 +164,7 @@ class Eq2 f where
     -- the second.
     liftEq2 :: (a -> b -> Bool) -> (c -> d -> Bool) -> f a c -> f b d -> Bool
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Eq2
-#endif
 
 -- | Lift the standard @('==')@ function through the type constructor.
 eq2 :: (Eq2 f, Eq a, Eq b) => f a b -> f a b -> Bool
@@ -197,9 +181,7 @@ class (Eq2 f) => Ord2 f where
     liftCompare2 :: (a -> b -> Ordering) -> (c -> d -> Ordering) ->
         f a c -> f b d -> Ordering
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Ord2
-#endif
 
 -- | Lift the standard 'compare' function through the type constructor.
 compare2 :: (Ord2 f, Ord a, Ord b) => f a b -> f a b -> Ordering
@@ -221,9 +203,7 @@ class Read2 f where
     liftReadList2 rp1 rl1 rp2 rl2 =
         readListWith (liftReadsPrec2 rp1 rl1 rp2 rl2 0)
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Read2
-#endif
 
 -- | Lift the standard 'readsPrec' function through the type constructor.
 readsPrec2 :: (Read2 f, Read a, Read b) => Int -> ReadS (f a b)
@@ -245,9 +225,7 @@ class Show2 f where
     liftShowList2 sp1 sl1 sp2 sl2 =
         showListWith (liftShowsPrec2 sp1 sl1 sp2 sl2 0)
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Show2
-#endif
 
 -- | Lift the standard 'showsPrec' function through the type constructor.
 showsPrec2 :: (Show2 f, Show a, Show b) => Int -> f a b -> ShowS

@@ -1,11 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE StandaloneDeriving #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.IO.Class
@@ -24,9 +20,7 @@ module Control.Monad.IO.Class (
     MonadIO(..)
   ) where
 
-#if __GLASGOW_HASKELL__ >= 708
 import Data.Typeable
-#endif
 
 -- | Monads in which 'IO' computations may be embedded.
 -- Any monad built by applying a sequence of monad transformers to the
@@ -43,9 +37,7 @@ class (Monad m) => MonadIO m where
     -- | Lift a computation from the 'IO' monad.
     liftIO :: IO a -> m a
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable MonadIO
-#endif
 
 instance MonadIO IO where
     liftIO = id

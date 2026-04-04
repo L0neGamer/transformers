@@ -1,22 +1,16 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE AutoDeriveTypeable #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE KindSignatures #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Functor.Compose
@@ -40,9 +34,7 @@ import Data.Functor.Contravariant
 #endif
 
 import Control.Applicative
-#if __GLASGOW_HASKELL__ >= 708
 import Data.Data
-#endif
 import Data.Foldable (Foldable(foldMap))
 import Data.Traversable (Traversable(traverse))
 #ifdef GENERICS
@@ -74,9 +66,7 @@ data MSCompose
 instance Datatype MDCompose where
     datatypeName _ = "Compose"
     moduleName   _ = "Data.Functor.Compose"
-# if __GLASGOW_HASKELL__ >= 708
     isNewtype    _ = True
-# endif
 
 instance Constructor MCCompose where
     conName     _ = "Compose"
@@ -86,11 +76,9 @@ instance Selector MSCompose where
     selName _ = "getCompose"
 #endif
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Compose
 deriving instance (Data (f (g a)), Typeable f, Typeable g, Typeable a)
                => Data (Compose (f :: * -> *) (g :: * -> *) (a :: *))
-#endif
 
 -- Instances of lifted Prelude classes
 

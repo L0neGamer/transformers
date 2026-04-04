@@ -1,22 +1,16 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE AutoDeriveTypeable #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE KindSignatures #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Functor.Sum
@@ -35,9 +29,7 @@ module Data.Functor.Sum (
   ) where
 
 import Control.Applicative
-#if __GLASGOW_HASKELL__ >= 708
 import Data.Data
-#endif
 import Data.Foldable (Foldable(foldMap))
 import Data.Functor.Classes
 #if MIN_VERSION_base(4,12,0)
@@ -79,11 +71,9 @@ instance Constructor MCInR where
     conName _ = "InR"
 #endif
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Sum
 deriving instance (Data (f a), Data (g a), Typeable f, Typeable g, Typeable a)
                => Data (Sum (f :: * -> *) (g :: * -> *) (a :: *))
-#endif
 
 instance (Eq1 f, Eq1 g) => Eq1 (Sum f g) where
     liftEq eq (InL x1) (InL x2) = liftEq eq x1 x2

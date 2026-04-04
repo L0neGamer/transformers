@@ -1,22 +1,16 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE Trustworthy #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE AutoDeriveTypeable #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE KindSignatures #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Functor.Product
@@ -38,9 +32,7 @@ import Control.Applicative
 import Control.Monad (MonadPlus(..))
 import Control.Monad.Fix (MonadFix(..))
 import Control.Monad.Zip (MonadZip(mzipWith))
-#if __GLASGOW_HASKELL__ >= 708
 import Data.Data
-#endif
 import Data.Foldable (Foldable(foldMap))
 import Data.Functor.Classes
 #if MIN_VERSION_base(4,12,0)
@@ -77,11 +69,9 @@ instance Constructor MCPair where
     conName _ = "Pair"
 #endif
 
-#if __GLASGOW_HASKELL__ >= 708
 deriving instance Typeable Product
 deriving instance (Data (f a), Data (g a), Typeable f, Typeable g, Typeable a)
                => Data (Product (f :: * -> *) (g :: * -> *) (a :: *))
-#endif
 
 instance (Eq1 f, Eq1 g) => Eq1 (Product f g) where
     liftEq eq (Pair x1 y1) (Pair x2 y2) = liftEq eq x1 x2 && liftEq eq y1 y2
