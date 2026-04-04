@@ -166,11 +166,7 @@ instance (Monad m) => Monad (ReaderT r m) where
         a <- runReaderT m r
         runReaderT (k a) r
     {-# INLINE (>>=) #-}
-#if MIN_VERSION_base(4,8,0)
     (>>) = (*>)
-#else
-    m >> k = ReaderT $ \ r -> runReaderT m r >> runReaderT k r
-#endif
     {-# INLINE (>>) #-}
 #if !(MIN_VERSION_base(4,13,0))
     fail msg = lift (fail msg)
