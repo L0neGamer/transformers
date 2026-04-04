@@ -48,7 +48,7 @@ import Data.Functor.Identity
 
 import Control.Applicative
 import qualified Control.Monad.Fail as Fail
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -131,7 +131,7 @@ shift f = shiftT (f . (runIdentity .))
 --
 -- @ContT r m@ is strict if and only if @m@ is.
 newtype ContT r m a = ContT { runContT :: (a -> m r) -> m r }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 

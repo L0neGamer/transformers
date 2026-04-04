@@ -60,7 +60,7 @@ import Data.Functor.Identity
 import Data.Monoid
 
 import qualified Control.Monad.Fail as Fail
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -118,7 +118,7 @@ mapWriter f = mapWriterT (Identity . f . runIdentity)
 -- <<images/bind-WriterT.svg>>
 --
 newtype WriterT w m a = WriterT { unWriterT :: w -> m (a, w) }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 

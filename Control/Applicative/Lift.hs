@@ -38,14 +38,14 @@ import Data.Functor.Constant
 import Data.Foldable (Foldable(foldMap))
 import Data.Monoid (Monoid(..))
 import Data.Traversable (Traversable(traverse))
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
 -- | Applicative functor formed by adding pure computations to a given
 -- applicative functor.
 data Lift f a = Pure a | Other (f a)
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
 #endif
 

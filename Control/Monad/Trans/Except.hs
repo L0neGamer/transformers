@@ -62,7 +62,7 @@ import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Foldable (Foldable(foldMap))
 import Data.Monoid (Monoid(mempty, mappend))
 import Data.Traversable (Traversable(traverse))
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -119,7 +119,7 @@ withExcept = withExceptT
 -- value, while @>>=@ sequences two subcomputations, exiting on the
 -- first exception.
 newtype ExceptT e m a = ExceptT { runExceptT :: m (Either e a) }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
 #endif
 

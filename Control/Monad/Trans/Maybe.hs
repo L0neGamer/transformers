@@ -52,7 +52,7 @@ import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Maybe (fromMaybe)
 import Data.Foldable (Foldable(foldMap))
 import Data.Traversable (Traversable(traverse))
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -65,7 +65,7 @@ import GHC.Generics
 -- value, while @>>=@ sequences two subcomputations, exiting if either
 -- computation does.
 newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
 #endif
 

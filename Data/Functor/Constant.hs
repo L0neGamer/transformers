@@ -37,7 +37,7 @@ import Prelude hiding (null, length)
 #ifdef __GLASGOW_HASKELL__
 import Data.Data
 #endif
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -47,7 +47,7 @@ newtype Constant a b = Constant { getConstant :: a }
 #ifdef __GLASGOW_HASKELL__
         , Data
 #endif
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
         , Generic, Generic1
 #endif
         )

@@ -61,7 +61,7 @@ import Data.Foldable
 import Data.Monoid
 import Data.Traversable (Traversable(traverse))
 import Prelude hiding (null, length)
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -117,7 +117,7 @@ mapWriter f = mapWriterT (Identity . f . runIdentity)
 -- <<images/bind-WriterT.svg>>
 --
 newtype WriterT w m a = WriterT { runWriterT :: m (a, w) }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 

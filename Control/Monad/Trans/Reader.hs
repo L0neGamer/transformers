@@ -51,7 +51,7 @@ import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
 import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Functor ((<$))
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -109,7 +109,7 @@ withReader = withReaderT
 --
 -- @ReaderT r m@ is strict if and only if @m@ is.
 newtype ReaderT r m a = ReaderT { runReaderT :: r -> m a }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
 #endif
 

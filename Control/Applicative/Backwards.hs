@@ -25,7 +25,7 @@ import Data.Foldable1 (Foldable1(foldMap1))
 #endif
 import Data.Functor.Classes
 import Data.Functor.Contravariant
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -37,7 +37,7 @@ import Data.Traversable (Traversable(traverse, sequenceA))
 -- | The same functor, but with an 'Applicative' instance that performs
 -- actions in the reverse order.
 newtype Backwards f a = Backwards { forwards :: f a }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
 #endif
 

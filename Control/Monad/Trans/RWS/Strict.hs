@@ -72,7 +72,7 @@ import Control.Monad
 import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
 import Data.Monoid
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -135,7 +135,7 @@ withRWS = withRWST
 -- collecting an output of type @w@ and updating a state of type @s@
 -- to an inner monad @m@.
 newtype RWST r w s m a = RWST { runRWST :: r -> s -> m (a, s, w) }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 

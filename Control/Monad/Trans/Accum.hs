@@ -63,7 +63,7 @@ import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
 import Control.Monad.Signatures
 import Data.Monoid
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -147,7 +147,7 @@ newtype AccumT w m a = AccumT {
     -- the sum of all arguments to calls of 'add' executed by the action.
     runAccumT :: w -> m (a, w)
     }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 

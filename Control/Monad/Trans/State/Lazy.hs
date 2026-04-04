@@ -84,7 +84,7 @@ import Control.Applicative
 import Control.Monad
 import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -159,7 +159,7 @@ withState = withStateT
 -- the final state of the first computation as the initial state of
 -- the second.
 newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 

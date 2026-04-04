@@ -44,7 +44,7 @@ import Control.Applicative
 import Control.Monad
 import qualified Control.Monad.Fail as Fail
 import Data.Functor.Identity
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -79,7 +79,7 @@ newtype SelectT r m a = SelectT {
     -- | Runs a @SelectT@ computation with a function for evaluating
     -- answers to select a particular answer.
     runSelectT :: (a -> m r) -> m a }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 

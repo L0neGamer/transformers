@@ -43,13 +43,13 @@ import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Foldable
 import Data.Traversable (Traversable(traverse))
 import Prelude hiding (foldr, foldr1, foldl, foldl1, null, length)
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
 -- | The trivial monad transformer, which maps a monad to an equivalent monad.
 newtype IdentityT f a = IdentityT { runIdentityT :: f a }
-#ifdef GENERICS
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
 #endif
 
