@@ -4,9 +4,7 @@
 #if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
 {-# LANGUAGE AutoDeriveTypeable #-}
 #endif
-#if defined(__GLASGOW_HASKELL__)
-{-# OPTIONS_GHC -fno-warn-deprecations #-}
-#endif
+{-# OPTIONS -fno-warn-deprecations #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Applicative.Lift
