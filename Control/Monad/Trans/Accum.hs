@@ -106,7 +106,7 @@ execAccum m w = snd (runAccum m w)
 -- and return the final value, discarding the final output.
 --
 -- * @'evalAccum' m w = 'fst' ('runAccum' m w)@
-evalAccum :: (Monoid w) => Accum w a -> w -> a
+evalAccum :: Accum w a -> w -> a
 evalAccum m w = fst (runAccum m w)
 {-# INLINE evalAccum #-}
 
@@ -164,7 +164,7 @@ execAccumT m w = do
 -- history and return the final value, discarding the final output.
 --
 -- * @'evalAccumT' m w = 'liftM' 'fst' ('runAccumT' m w)@
-evalAccumT :: (Monad m, Monoid w) => AccumT w m a -> w -> m a
+evalAccumT :: (Monad m) => AccumT w m a -> w -> m a
 evalAccumT m w = do
     ~(a, _) <- runAccumT m w
     return a
