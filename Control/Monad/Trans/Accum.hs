@@ -200,10 +200,6 @@ instance (Monoid w, Functor m, MonadPlus m) => Alternative (AccumT w m) where
     {-# INLINE (<|>) #-}
 
 instance (Monoid w, Functor m, Monad m) => Monad (AccumT w m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a  = AccumT $ const $ return (a, mempty)
-    {-# INLINE return #-}
-#endif
     m >>= k  = AccumT $ \ w -> do
         ~(a, w')  <- runAccumT m w
         ~(b, w'') <- runAccumT (k a) (w `mappend` w')

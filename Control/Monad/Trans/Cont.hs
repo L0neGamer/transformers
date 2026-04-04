@@ -176,10 +176,6 @@ instance Applicative (ContT r m) where
     {-# INLINE (*>) #-}
 
 instance Monad (ContT r m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return x = ContT ($ x)
-    {-# INLINE return #-}
-#endif
     m >>= k  = ContT $ \ c -> runContT m (\ x -> runContT (k x) c)
     {-# INLINE (>>=) #-}
 

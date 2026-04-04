@@ -117,10 +117,6 @@ instance (Functor m, MonadPlus m) => Alternative (SelectT r m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (SelectT r m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return = lift . return
-    {-# INLINE return #-}
-#endif
     SelectT g >>= f = SelectT $ \ k -> do
         let h x = runSelectT (f x) k
         y <- g ((>>= k) . h)

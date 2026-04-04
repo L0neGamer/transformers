@@ -91,10 +91,6 @@ instance (Alternative f) => Alternative (Reverse f) where
 
 -- | Derived instance.
 instance (Monad m) => Monad (Reverse m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = Reverse (return a)
-    {-# INLINE return #-}
-#endif
     m >>= f = Reverse (getReverse m >>= getReverse . f)
     {-# INLINE (>>=) #-}
 #if !(MIN_VERSION_base(4,13,0))

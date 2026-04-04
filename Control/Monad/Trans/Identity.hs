@@ -123,10 +123,6 @@ instance (Alternative m) => Alternative (IdentityT m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (IdentityT m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return = IdentityT . return
-    {-# INLINE return #-}
-#endif
     m >>= k = IdentityT $ runIdentityT . k =<< runIdentityT m
     {-# INLINE (>>=) #-}
 #if !(MIN_VERSION_base(4,13,0))

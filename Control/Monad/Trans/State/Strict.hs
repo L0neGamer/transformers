@@ -219,10 +219,6 @@ instance (Functor m, MonadPlus m) => Alternative (StateT s m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (StateT s m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = StateT $ \ s -> return (a, s)
-    {-# INLINE return #-}
-#endif
     m >>= k  = StateT $ \ s -> do
         (a, s') <- runStateT m s
         runStateT (k a) s'

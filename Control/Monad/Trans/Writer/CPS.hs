@@ -180,11 +180,6 @@ instance (Functor m, MonadPlus m) => Alternative (WriterT w m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (WriterT w m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = WriterT $ \ w -> return (a, w)
-    {-# INLINE return #-}
-#endif
-
     m >>= k = WriterT $ \ w -> do
         (a, w') <- unWriterT m w
         unWriterT (k a) w'

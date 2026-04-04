@@ -225,11 +225,6 @@ instance (Functor m, MonadPlus m) => Alternative (RWST r w s m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (RWST r w s m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = RWST $ \ _ s w -> return (a, s, w)
-    {-# INLINE return #-}
-#endif
-
     m >>= k = RWST $ \ r s w -> do
         (a, s', w')    <- unRWST m r s w
         unRWST (k a) r s' w'
