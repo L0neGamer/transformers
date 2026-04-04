@@ -72,7 +72,7 @@ import Control.Monad.Signatures
 #if !MIN_VERSION_base(4,8,0)
 import Data.Monoid
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -156,7 +156,7 @@ newtype AccumT w m a = AccumT {
     -- the sum of all arguments to calls of 'add' executed by the action.
     runAccumT :: w -> m (a, w)
     }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
     deriving (Generic)
 #endif
 

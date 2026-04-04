@@ -73,7 +73,7 @@ import Data.Foldable (Foldable(foldMap))
 import Data.Monoid (Monoid(mempty, mappend))
 import Data.Traversable (Traversable(traverse))
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -130,10 +130,8 @@ withExcept = withExceptT
 -- value, while @>>=@ sequences two subcomputations, exiting on the
 -- first exception.
 newtype ExceptT e m a = ExceptT { runExceptT :: m (Either e a) }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef GENERICS
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq e, Eq1 m) => Eq1 (ExceptT e m) where

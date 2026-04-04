@@ -56,16 +56,14 @@ import Data.Foldable
 import Data.Traversable (Traversable(traverse))
 #endif
 import Prelude hiding (foldr, foldr1, foldl, foldl1, null, length)
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
 -- | The trivial monad transformer, which maps a monad to an equivalent monad.
 newtype IdentityT f a = IdentityT { runIdentityT :: f a }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef GENERICS
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 f) => Eq1 (IdentityT f) where

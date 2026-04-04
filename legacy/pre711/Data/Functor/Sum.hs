@@ -45,14 +45,14 @@ import Data.Functor.Contravariant
 #endif
 import Data.Monoid (mappend)
 import Data.Traversable (Traversable(traverse))
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
 -- | Lifted sum of functors.
 data Sum f g a = InL (f a) | InR (g a)
 
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 deriving instance Generic (Sum f g a)
 
 instance Generic1 (Sum f g) where

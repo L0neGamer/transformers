@@ -47,17 +47,15 @@ import Data.Foldable (Foldable(foldMap))
 import Data.Monoid (Monoid(..))
 import Data.Traversable (Traversable(traverse))
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
 -- | Applicative functor formed by adding pure computations to a given
 -- applicative functor.
 data Lift f a = Pure a | Other (f a)
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef GENERICS
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 f) => Eq1 (Lift f) where

@@ -75,7 +75,7 @@ import Data.Monoid
 import Data.Traversable (Traversable(traverse))
 #endif
 import Prelude hiding (null, length)
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -131,7 +131,7 @@ mapWriter f = mapWriterT (Identity . f . runIdentity)
 -- <<images/bind-WriterT.svg>>
 --
 newtype WriterT w m a = WriterT { runWriterT :: m (a, w) }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
     deriving (Generic)
 #endif
 

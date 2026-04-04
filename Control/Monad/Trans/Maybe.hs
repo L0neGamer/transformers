@@ -63,7 +63,7 @@ import Data.Maybe (fromMaybe)
 import Data.Foldable (Foldable(foldMap))
 import Data.Traversable (Traversable(traverse))
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -76,10 +76,8 @@ import GHC.Generics
 -- value, while @>>=@ sequences two subcomputations, exiting if either
 -- computation does.
 newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef GENERICS
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 m) => Eq1 (MaybeT m) where

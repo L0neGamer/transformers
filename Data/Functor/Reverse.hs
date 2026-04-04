@@ -47,17 +47,15 @@ import Data.Foldable
 import Data.Traversable (Traversable(traverse))
 #endif
 import Data.Monoid
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
 -- | The same functor, but with 'Foldable' and 'Traversable' instances
 -- that process the elements in the reverse order.
 newtype Reverse f a = Reverse { getReverse :: f a }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef GENERICS
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 f) => Eq1 (Reverse f) where

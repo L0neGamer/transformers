@@ -69,7 +69,7 @@ import Data.Monoid
 #if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -127,7 +127,7 @@ mapWriter f = mapWriterT (Identity . f . runIdentity)
 -- <<images/bind-WriterT.svg>>
 --
 newtype WriterT w m a = WriterT { unWriterT :: w -> m (a, w) }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
     deriving (Generic)
 #endif
 

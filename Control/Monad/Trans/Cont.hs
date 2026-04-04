@@ -59,7 +59,7 @@ import Control.Applicative
 #if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -142,7 +142,7 @@ shift f = shiftT (f . (runIdentity .))
 --
 -- @ContT r m@ is strict if and only if @m@ is.
 newtype ContT r m a = ContT { runContT :: (a -> m r) -> m r }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
     deriving (Generic)
 #endif
 

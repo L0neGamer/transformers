@@ -54,7 +54,7 @@ import Prelude hiding (null, length)
 #if __GLASGOW_HASKELL__ >= 800
 import Data.Data
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -64,10 +64,8 @@ newtype Constant a b = Constant { getConstant :: a }
 #if __GLASGOW_HASKELL__ >= 800
         , Data
 #endif
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef GENERICS
         , Generic, Generic1
-#elif __GLASGOW_HASKELL__ >= 704
-        , Generic
 #endif
         )
 

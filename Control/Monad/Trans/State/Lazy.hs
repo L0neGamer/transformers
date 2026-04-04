@@ -93,7 +93,7 @@ import Control.Monad
 import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
 import GHC.Generics
 #endif
 
@@ -168,7 +168,7 @@ withState = withStateT
 -- the final state of the first computation as the initial state of
 -- the second.
 newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef GENERICS
     deriving (Generic)
 #endif
 
