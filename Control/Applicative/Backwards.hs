@@ -1,11 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
 #if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
 {-# LANGUAGE AutoDeriveTypeable #-}
 #endif
@@ -92,12 +88,10 @@ instance (Applicative f) => Applicative (Backwards f) where
     liftA2 f (Backwards m) (Backwards n) = Backwards $ liftA2 (flip f) n m
     {-# INLINE liftA2 #-}
 #endif
-#if MIN_VERSION_base(4,2,0)
     Backwards xs *> Backwards ys = Backwards (ys <* xs)
     {-# INLINE (*>) #-}
     Backwards ys <* Backwards xs = Backwards (xs *> ys)
     {-# INLINE (<*) #-}
-#endif
 
 -- | Try alternatives in the same order as @f@.
 instance (Alternative f) => Alternative (Backwards f) where

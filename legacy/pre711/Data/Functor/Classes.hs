@@ -69,9 +69,7 @@ module Data.Functor.Classes (
 import Control.Applicative (Const(Const))
 import Data.Functor.Identity (Identity(Identity))
 import Data.Monoid (mappend)
-#if MIN_VERSION_base(4,7,0)
 import Data.Proxy (Proxy(Proxy))
-#endif
 #if __GLASGOW_HASKELL__ >= 708
 import Data.Typeable
 #endif
@@ -361,7 +359,6 @@ instance (Read a) => Read1 (Either a) where
 instance (Show a) => Show1 (Either a) where
     liftShowsPrec = liftShowsPrec2 showsPrec showList
 
-#if MIN_VERSION_base(4,7,0)
 instance Eq1 Proxy where
     liftEq _ _ _ = True
 
@@ -374,7 +371,6 @@ instance Show1 Proxy where
 instance Read1 Proxy where
     liftReadsPrec _ _ d =
         readParen (d > 10) (\r -> [(Proxy, s) | ("Proxy",s) <- lex r ])
-#endif
 
 -- Instances for other functors defined in the base package
 

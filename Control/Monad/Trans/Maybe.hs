@@ -57,9 +57,7 @@ import Control.Monad (MonadPlus(mzero, mplus), liftM)
 import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix (MonadFix(mfix))
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
 import Data.Maybe (fromMaybe)
 #if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Foldable (Foldable(foldMap))
@@ -217,11 +215,9 @@ instance (MonadIO m) => MonadIO (MaybeT m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (MonadZip m) => MonadZip (MaybeT m) where
     mzipWith f (MaybeT a) (MaybeT b) = MaybeT $ mzipWith (liftA2 f) a b
     {-# INLINE mzipWith #-}
-#endif
 
 #if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (MaybeT m) where

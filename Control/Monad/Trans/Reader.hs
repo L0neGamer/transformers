@@ -58,15 +58,8 @@ import Control.Monad
 import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix
-#if !(MIN_VERSION_base(4,6,0))
-import Control.Monad.Instances ()  -- deprecated from base-4.6
-#endif
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
-#if (MIN_VERSION_base(4,2,0)) && !(MIN_VERSION_base(4,8,0))
 import Data.Functor ((<$))
-#endif
 #if __GLASGOW_HASKELL__ >= 704
 import GHC.Generics
 #endif
@@ -152,22 +145,18 @@ withReaderT f m = ReaderT $ runReaderT m . f
 instance (Functor m) => Functor (ReaderT r m) where
     fmap f  = mapReaderT (fmap f)
     {-# INLINE fmap #-}
-#if MIN_VERSION_base(4,2,0)
     x <$ v = mapReaderT (x <$) v
     {-# INLINE (<$) #-}
-#endif
 
 instance (Applicative m) => Applicative (ReaderT r m) where
     pure    = liftReaderT . pure
     {-# INLINE pure #-}
     f <*> v = ReaderT $ \ r -> runReaderT f r <*> runReaderT v r
     {-# INLINE (<*>) #-}
-#if MIN_VERSION_base(4,2,0)
     u *> v = ReaderT $ \ r -> runReaderT u r *> runReaderT v r
     {-# INLINE (*>) #-}
     u <* v = ReaderT $ \ r -> runReaderT u r <* runReaderT v r
     {-# INLINE (<*) #-}
-#endif
 #if MIN_VERSION_base(4,10,0)
     liftA2 f x y = ReaderT $ \ r -> liftA2 f (runReaderT x r) (runReaderT y r)
     {-# INLINE liftA2 #-}
@@ -223,12 +212,10 @@ instance (MonadIO m) => MonadIO (ReaderT r m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (MonadZip m) => MonadZip (ReaderT r m) where
     mzipWith f (ReaderT m) (ReaderT n) = ReaderT $ \ a ->
         mzipWith f (m a) (n a)
     {-# INLINE mzipWith #-}
-#endif
 
 #if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (ReaderT r m) where

@@ -68,9 +68,7 @@ import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix
 import Control.Monad.Signatures
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
 import Data.Foldable
 import Data.Monoid
 #if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
@@ -255,12 +253,10 @@ instance (Monoid w, MonadIO m) => MonadIO (WriterT w m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (Monoid w, MonadZip m) => MonadZip (WriterT w m) where
     mzipWith f (WriterT x) (WriterT y) = WriterT $
         mzipWith (\ (a, w) (b, w') -> (f a b, w `mappend` w')) x y
     {-# INLINE mzipWith #-}
-#endif
 
 #if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (WriterT w m) where

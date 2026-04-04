@@ -50,9 +50,7 @@ import Control.Monad (MonadPlus(mzero, mplus))
 import qualified Control.Monad.Fail as Fail
 #endif
 import Control.Monad.Fix (MonadFix(mfix))
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
 import Data.Foldable
 #if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Traversable (Traversable(traverse))
@@ -169,11 +167,9 @@ instance (MonadIO m) => MonadIO (IdentityT m) where
     liftIO = IdentityT . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (MonadZip m) => MonadZip (IdentityT m) where
     mzipWith f = lift2IdentityT (mzipWith f)
     {-# INLINE mzipWith #-}
-#endif
 
 instance MonadTrans IdentityT where
     lift = IdentityT
