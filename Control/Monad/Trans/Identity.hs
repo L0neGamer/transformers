@@ -33,15 +33,11 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Data.Foldable1 (Foldable1(foldMap1))
 #endif
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Control.Applicative
 import Control.Monad (MonadPlus(mzero, mplus))
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix (MonadFix(mfix))
 import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Foldable
@@ -125,16 +121,10 @@ instance (Alternative m) => Alternative (IdentityT m) where
 instance (Monad m) => Monad (IdentityT m) where
     m >>= k = IdentityT $ runIdentityT . k =<< runIdentityT m
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = IdentityT $ fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (IdentityT m) where
     fail msg = IdentityT $ Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (MonadPlus m) => MonadPlus (IdentityT m) where
     mzero = IdentityT mzero
@@ -158,11 +148,9 @@ instance MonadTrans IdentityT where
     lift = IdentityT
     {-# INLINE lift #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance (Contravariant f) => Contravariant (IdentityT f) where
     contramap f = IdentityT . contramap f . runIdentityT
     {-# INLINE contramap #-}
-#endif
 
 -- | Lift a unary operation to the new monad.
 mapIdentityT :: (m a -> n b) -> IdentityT m a -> IdentityT n b

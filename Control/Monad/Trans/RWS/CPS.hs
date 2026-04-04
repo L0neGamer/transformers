@@ -73,9 +73,7 @@ import Data.Functor.Identity
 
 import Data.Monoid
 
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 #ifdef GENERICS
 import GHC.Generics
 #endif
@@ -230,16 +228,10 @@ instance (Monad m) => Monad (RWST r w s m) where
         unRWST (k a) r s' w'
     {-# INLINE (>>=) #-}
 
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = RWST $ \ _ _ _ -> fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (RWST r w s m) where
     fail msg = RWST $ \ _ _ _ -> Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (Functor m, MonadPlus m) => MonadPlus (RWST r w s m) where
     mzero = empty

@@ -42,15 +42,11 @@ import Control.Monad.Signatures
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Except (ExceptT(..))
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Control.Applicative
 import Control.Monad (MonadPlus(mzero, mplus), liftM)
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix (MonadFix(mfix))
 import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Maybe (fromMaybe)
@@ -168,16 +164,10 @@ instance (Monad m) => Monad (MaybeT m) where
             Nothing -> return Nothing
             Just y  -> runMaybeT (f y)
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail _ = MaybeT (return Nothing)
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Monad m) => Fail.MonadFail (MaybeT m) where
     fail _ = MaybeT (return Nothing)
     {-# INLINE fail #-}
-#endif
 
 instance (Monad m) => MonadPlus (MaybeT m) where
     mzero = MaybeT (return Nothing)
@@ -206,11 +196,9 @@ instance (MonadZip m) => MonadZip (MaybeT m) where
     mzipWith f (MaybeT a) (MaybeT b) = MaybeT $ mzipWith (liftA2 f) a b
     {-# INLINE mzipWith #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (MaybeT m) where
     contramap f = MaybeT . contramap (fmap f) . runMaybeT
     {-# INLINE contramap #-}
-#endif
 
 -- | Lift a @callCC@ operation to the new monad.
 liftCallCC :: CallCC m (Maybe a) (Maybe b) -> CallCC (MaybeT m) a b

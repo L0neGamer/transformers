@@ -51,16 +51,12 @@ module Control.Monad.Trans.Writer.Strict (
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
 import Control.Monad.Signatures
 import Control.Monad.Zip (MonadZip(mzipWith))
@@ -209,16 +205,10 @@ instance (Monoid w, Monad m) => Monad (WriterT w m) where
         (b, w') <- runWriterT (k a)
         return (b, w `mappend` w')
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = WriterT $ fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Monoid w, Fail.MonadFail m) => Fail.MonadFail (WriterT w m) where
     fail msg = WriterT $ Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (Monoid w, MonadPlus m) => MonadPlus (WriterT w m) where
     mzero       = WriterT mzero
@@ -245,11 +235,9 @@ instance (Monoid w, MonadZip m) => MonadZip (WriterT w m) where
         mzipWith (\ (a, w) (b, w') -> (f a b, w `mappend` w')) x y
     {-# INLINE mzipWith #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (WriterT w m) where
     contramap f = mapWriterT $ contramap $ \ (a, w) -> (f a, w)
     {-# INLINE contramap #-}
-#endif
 
 -- | @'tell' w@ is an action that produces the output @w@.
 tell :: (Monad m) => w -> WriterT w m ()

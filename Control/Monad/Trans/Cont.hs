@@ -47,9 +47,7 @@ import Control.Monad.Trans.Class
 import Data.Functor.Identity
 
 import Control.Applicative
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 #ifdef GENERICS
 import GHC.Generics
 #endif
@@ -179,11 +177,9 @@ instance Monad (ContT r m) where
     m >>= k  = ContT $ \ c -> runContT m (\ x -> runContT (k x) c)
     {-# INLINE (>>=) #-}
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (ContT r m) where
     fail msg = ContT $ \ _ -> Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance MonadTrans (ContT r) where
     lift m = ContT (m >>=)

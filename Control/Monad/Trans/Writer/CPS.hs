@@ -59,9 +59,7 @@ import Data.Functor.Identity
 
 import Data.Monoid
 
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 #ifdef GENERICS
 import GHC.Generics
 #endif
@@ -185,16 +183,10 @@ instance (Monad m) => Monad (WriterT w m) where
         unWriterT (k a) w'
     {-# INLINE (>>=) #-}
 
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = WriterT $ \ _ -> fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (WriterT w m) where
     fail msg = WriterT $ \ _ -> Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (Functor m, MonadPlus m) => MonadPlus (WriterT w m) where
     mzero = empty

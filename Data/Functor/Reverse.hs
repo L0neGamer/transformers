@@ -25,16 +25,12 @@ import Control.Applicative.Backwards
 import Data.Foldable1 (Foldable1(foldMap1))
 #endif
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Prelude hiding (foldr, foldr1, foldl, foldl1, null, length)
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Data.Foldable
 import Data.Traversable (Traversable(traverse))
 import Data.Monoid
@@ -93,16 +89,10 @@ instance (Alternative f) => Alternative (Reverse f) where
 instance (Monad m) => Monad (Reverse m) where
     m >>= f = Reverse (getReverse m >>= getReverse . f)
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = Reverse (fail msg)
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (Reverse m) where
     fail msg = Reverse (Fail.fail msg)
     {-# INLINE fail #-}
-#endif
 
 -- | Derived instance.
 instance (MonadPlus m) => MonadPlus (Reverse m) where
@@ -138,9 +128,7 @@ instance (Traversable f) => Traversable (Reverse f) where
         fmap Reverse . forwards $ traverse (Backwards . f) t
     {-# INLINE traverse #-}
 
-#if MIN_VERSION_base(4,12,0)
 -- | Derived instance.
 instance (Contravariant f) => Contravariant (Reverse f) where
     contramap f = Reverse . contramap f . getReverse
     {-# INLINE contramap #-}
-#endif

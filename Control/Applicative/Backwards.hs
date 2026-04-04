@@ -24,9 +24,7 @@ module Control.Applicative.Backwards (
 import Data.Foldable1 (Foldable1(foldMap1))
 #endif
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 #ifdef GENERICS
 import GHC.Generics
 #endif
@@ -77,10 +75,8 @@ instance (Applicative f) => Applicative (Backwards f) where
     {-# INLINE pure #-}
     Backwards f <*> Backwards a = Backwards (a <**> f)
     {-# INLINE (<*>) #-}
-#if MIN_VERSION_base(4,10,0)
     liftA2 f (Backwards m) (Backwards n) = Backwards $ liftA2 (flip f) n m
     {-# INLINE liftA2 #-}
-#endif
     Backwards xs *> Backwards ys = Backwards (ys <* xs)
     {-# INLINE (*>) #-}
     Backwards ys <* Backwards xs = Backwards (xs *> ys)
@@ -122,9 +118,7 @@ instance (Traversable f) => Traversable (Backwards f) where
     sequenceA (Backwards t) = fmap Backwards (sequenceA t)
     {-# INLINE sequenceA #-}
 
-#if MIN_VERSION_base(4,12,0)
 -- | Derived instance.
 instance (Contravariant f) => Contravariant (Backwards f) where
     contramap f = Backwards . contramap f . forwards
     {-# INLINE contramap #-}
-#endif

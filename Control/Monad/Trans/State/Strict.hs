@@ -70,16 +70,12 @@ module Control.Monad.Trans.State.Strict (
 import Control.Monad.IO.Class
 import Control.Monad.Signatures
 import Control.Monad.Trans.Class
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
 #ifdef GENERICS
 import GHC.Generics
@@ -223,16 +219,10 @@ instance (Monad m) => Monad (StateT s m) where
         (a, s') <- runStateT m s
         runStateT (k a) s'
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail str = StateT $ \ _ -> fail str
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (StateT s m) where
     fail str = StateT $ \ _ -> Fail.fail str
     {-# INLINE fail #-}
-#endif
 
 instance (MonadPlus m) => MonadPlus (StateT s m) where
     mzero       = StateT $ \ _ -> mzero
@@ -254,12 +244,10 @@ instance (MonadIO m) => MonadIO (StateT s m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (StateT s m) where
     contramap f m = StateT $ \s ->
       contramap (\ (a, s') -> (f a, s')) $ runStateT m s
     {-# INLINE contramap #-}
-#endif
 
 -- | Fetch the current value of the state within the monad.
 get :: (Monad m) => StateT s m s

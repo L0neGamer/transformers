@@ -23,22 +23,16 @@ module Data.Functor.Constant {-# DEPRECATED "Use Data.Functor.Const; will be rem
   ) where
 
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Control.Applicative
 import Data.Foldable
 import Data.Monoid (Monoid(..))
 import Data.Traversable (Traversable(traverse))
 import Data.Bifunctor (Bifunctor(..))
-#if (MIN_VERSION_base(4,9,0)) && !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup (Semigroup((<>)))
-#endif
-#if MIN_VERSION_base(4,10,0)
 import Data.Bifoldable (Bifoldable(..))
 import Data.Bitraversable (Bitraversable(..))
-#endif
 import Prelude hiding (null, length)
 #if __GLASGOW_HASKELL__ >= 800
 import Data.Data
@@ -112,11 +106,9 @@ instance Traversable (Constant a) where
     traverse _ (Constant x) = pure (Constant x)
     {-# INLINE traverse #-}
 
-#if MIN_VERSION_base(4,9,0)
 instance (Semigroup a) => Semigroup (Constant a b) where
     Constant x <> Constant y = Constant (x <> y)
     {-# INLINE (<>) #-}
-#endif
 
 instance (Monoid a) => Applicative (Constant a) where
     pure _ = Constant mempty
@@ -127,11 +119,6 @@ instance (Monoid a) => Applicative (Constant a) where
 instance (Monoid a) => Monoid (Constant a b) where
     mempty = Constant mempty
     {-# INLINE mempty #-}
-#if !MIN_VERSION_base(4,11,0)
-    -- From base-4.11, Monoid(mappend) defaults to Semigroup((<>))
-    Constant x `mappend` Constant y = Constant (x `mappend` y)
-    {-# INLINE mappend #-}
-#endif
 
 instance Bifunctor Constant where
     first f (Constant x) = Constant (f x)
@@ -139,7 +126,6 @@ instance Bifunctor Constant where
     second _ (Constant x) = Constant x
     {-# INLINE second #-}
 
-#if MIN_VERSION_base(4,10,0)
 instance Bifoldable Constant where
     bifoldMap f _ (Constant a) = f a
     {-# INLINE bifoldMap #-}
@@ -147,10 +133,7 @@ instance Bifoldable Constant where
 instance Bitraversable Constant where
     bitraverse f _ (Constant a) = Constant <$> f a
     {-# INLINE bitraverse #-}
-#endif
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant (Constant a) where
     contramap _ (Constant a) = Constant a
     {-# INLINE contramap #-}
-#endif

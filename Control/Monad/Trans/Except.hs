@@ -51,16 +51,12 @@ import Control.Monad.IO.Class
 import Control.Monad.Signatures
 import Control.Monad.Trans.Class
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
 import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Foldable (Foldable(foldMap))
@@ -220,16 +216,10 @@ instance (Monad m) => Monad (ExceptT e m) where
             Left e -> return (Left e)
             Right x -> runExceptT (k x)
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail = ExceptT . fail
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (ExceptT e m) where
     fail = ExceptT . Fail.fail
     {-# INLINE fail #-}
-#endif
 
 instance (Monad m, Monoid e) => MonadPlus (ExceptT e m) where
     mzero = ExceptT $ return (Left mempty)
@@ -258,11 +248,9 @@ instance (MonadZip m) => MonadZip (ExceptT e m) where
     mzipWith f (ExceptT a) (ExceptT b) = ExceptT $ mzipWith (liftA2 f) a b
     {-# INLINE mzipWith #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (ExceptT e m) where
     contramap f = ExceptT . contramap (fmap f) . runExceptT
     {-# INLINE contramap #-}
-#endif
 
 -- | Signal an exception value @e@.
 --

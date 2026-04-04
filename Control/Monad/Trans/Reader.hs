@@ -42,16 +42,12 @@ module Control.Monad.Trans.Reader (
 import Control.Monad.IO.Class
 import Control.Monad.Signatures
 import Control.Monad.Trans.Class
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
 import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Functor ((<$))
@@ -150,10 +146,8 @@ instance (Applicative m) => Applicative (ReaderT r m) where
     {-# INLINE (*>) #-}
     u <* v = ReaderT $ \ r -> runReaderT u r <* runReaderT v r
     {-# INLINE (<*) #-}
-#if MIN_VERSION_base(4,10,0)
     liftA2 f x y = ReaderT $ \ r -> liftA2 f (runReaderT x r) (runReaderT y r)
     {-# INLINE liftA2 #-}
-#endif
 
 instance (Alternative m) => Alternative (ReaderT r m) where
     empty   = liftReaderT empty
@@ -168,16 +162,10 @@ instance (Monad m) => Monad (ReaderT r m) where
     {-# INLINE (>>=) #-}
     (>>) = (*>)
     {-# INLINE (>>) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = lift (fail msg)
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (ReaderT r m) where
     fail msg = lift (Fail.fail msg)
     {-# INLINE fail #-}
-#endif
 
 instance (MonadPlus m) => MonadPlus (ReaderT r m) where
     mzero       = lift mzero
@@ -202,11 +190,9 @@ instance (MonadZip m) => MonadZip (ReaderT r m) where
         mzipWith f (m a) (n a)
     {-# INLINE mzipWith #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (ReaderT r m) where
     contramap f = ReaderT . fmap (contramap f) . runReaderT
     {-# INLINE contramap #-}
-#endif
 
 liftReaderT :: m a -> ReaderT r m a
 liftReaderT m = ReaderT (const m)
