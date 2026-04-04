@@ -18,7 +18,7 @@
 -- The constant functor.
 -----------------------------------------------------------------------------
 
-module Data.Functor.Constant {-# DEPRECATED "Use Data.Functor.Const" #-} (
+module Data.Functor.Constant {-# DEPRECATED "Use Data.Functor.Const; will be removed in transformers 0.7" #-} (
     Constant(..),
   ) where
 
