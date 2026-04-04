@@ -43,7 +43,6 @@ tested-with:
   GHC == 9.8
   GHC == 9.2
   GHC == 8.10
-  GHC == 7.10
   MHS == 0.14
 
 source-repository head
@@ -52,22 +51,11 @@ source-repository head
 
 library
   default-language: Haskell2010
-  build-depends: base >= 4.8 && < 5
+  build-depends: base >= 4.14 && < 5
   hs-source-dirs: .
   if impl(ghc)
     cpp-options:
       -DGENERICS
-  if impl(ghc<7.11)
-    -- modules moved into base-4.9.0 (GHC 8.0)
-    -- see https://ghc.haskell.org/trac/ghc/ticket/10773
-    -- see https://ghc.haskell.org/trac/ghc/ticket/11135
-    hs-source-dirs: legacy/pre711
-    exposed-modules:
-      Control.Monad.IO.Class
-      Data.Functor.Classes
-      Data.Functor.Compose
-      Data.Functor.Product
-      Data.Functor.Sum
   exposed-modules:
     Control.Applicative.Backwards
     Control.Applicative.Lift

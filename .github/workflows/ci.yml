@@ -14,12 +14,10 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        ghc: ['7.10', '8.10', '9.2', '9.8', '9.10', '9.12']
+        ghc: ['8.10', '9.2', '9.8', '9.10', '9.12']
         exclude:
           - os: macos-latest
             ghc: '8.10'  # ghc-8.10 does not support ARM
-          - os: macos-latest
-            ghc: '7.10'  # ghc-7.10 does not support ARM
       fail-fast: false
     steps:
       - name: Checkout base repo
