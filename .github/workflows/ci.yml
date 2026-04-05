@@ -70,4 +70,4 @@ jobs:
         run: |
           PATH="$HOME/.mcabal/bin:$PATH"
           cd transformers
-          mcabal install
+          mcabal -r install
