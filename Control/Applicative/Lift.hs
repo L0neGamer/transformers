@@ -146,8 +146,8 @@ elimLift _ g (Other e) = g e
 -- "Control.Monad.Trans.Except", these computations continue after an
 -- error, collecting all the errors.
 --
--- __The use of `Constant` will be replaced by @Data.Functor.Const.Const@ in
--- `transformers-0.7`. It is recommended to convert to and from the @Either@
+-- __The use of `Constant` will be replaced by @Data.Functor.Const.Const@ by
+-- `transformers-0.8`. It is recommended to convert to and from the @Either@
 -- values using functions in this module, rather than manipulating the
 -- underlying @Lift@ed @Constant@ values directly.
 --
