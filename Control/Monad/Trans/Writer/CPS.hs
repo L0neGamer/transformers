@@ -160,7 +160,7 @@ instance (Functor m) => Functor (WriterT w m) where
     fmap f m = WriterT $ \ w -> (\ (a, w') -> (f a, w')) <$> unWriterT m w
     {-# INLINE fmap #-}
 
-instance (Functor m, Monad m) => Applicative (WriterT w m) where
+instance (Monad m) => Applicative (WriterT w m) where
     pure a = WriterT $ \ w -> return (a, w)
     {-# INLINE pure #-}
 
@@ -170,7 +170,7 @@ instance (Functor m, Monad m) => Applicative (WriterT w m) where
         return (f x, w'')
     {-# INLINE (<*>) #-}
 
-instance (Functor m, MonadPlus m) => Alternative (WriterT w m) where
+instance (MonadPlus m) => Alternative (WriterT w m) where
     empty = WriterT $ const mzero
     {-# INLINE empty #-}
 
@@ -188,7 +188,7 @@ instance (Fail.MonadFail m) => Fail.MonadFail (WriterT w m) where
     fail msg = WriterT $ \ _ -> Fail.fail msg
     {-# INLINE fail #-}
 
-instance (Functor m, MonadPlus m) => MonadPlus (WriterT w m) where
+instance (MonadPlus m) => MonadPlus (WriterT w m) where
     mzero = empty
     {-# INLINE mzero #-}
     mplus = (<|>)
