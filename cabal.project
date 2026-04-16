@@ -3,4 +3,4 @@ packages: .
 
 program-options
   ghc-options:
-    -Wall -Wredundant-constraints -Werror
+    -Wall -Wredundant-constraints -Werror -Wwarn=unused-imports
