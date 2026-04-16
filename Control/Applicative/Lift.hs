@@ -1,14 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
-#if defined(__GLASGOW_HASKELL__)
-{-# OPTIONS_GHC -fno-warn-deprecations #-}
-#endif
+{-# OPTIONS -fno-warn-deprecations #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Applicative.Lift
@@ -42,22 +35,18 @@ import Data.Functor.Classes
 
 import Control.Applicative
 import Data.Functor.Constant
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Foldable (Foldable(foldMap))
 import Data.Monoid (Monoid(..))
 import Data.Traversable (Traversable(traverse))
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
 -- | Applicative functor formed by adding pure computations to a given
 -- applicative functor.
 data Lift f a = Pure a | Other (f a)
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 f) => Eq1 (Lift f) where
@@ -157,8 +146,8 @@ elimLift _ g (Other e) = g e
 -- "Control.Monad.Trans.Except", these computations continue after an
 -- error, collecting all the errors.
 --
--- __The use of `Constant` will be replaced by @Data.Functor.Const.Const@ in a__
--- __future version.__ It is recommended to convert to and from the @Either@
+-- __The use of `Constant` will be replaced by @Data.Functor.Const.Const@ by
+-- `transformers-0.8`. It is recommended to convert to and from the @Either@
 -- values using functions in this module, rather than manipulating the
 -- underlying @Lift@ed @Constant@ values directly.
 --

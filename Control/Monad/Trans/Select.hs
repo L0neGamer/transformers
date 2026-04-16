@@ -1,14 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Select
@@ -49,11 +42,9 @@ import Control.Monad.Trans.Cont
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Data.Functor.Identity
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -88,7 +79,7 @@ newtype SelectT r m a = SelectT {
     -- | Runs a @SelectT@ computation with a function for evaluating
     -- answers to select a particular answer.
     runSelectT :: (a -> m r) -> m a }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 
@@ -124,21 +115,15 @@ instance (Functor m, MonadPlus m) => Alternative (SelectT r m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (SelectT r m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return = lift . return
-    {-# INLINE return #-}
-#endif
     SelectT g >>= f = SelectT $ \ k -> do
         let h x = runSelectT (f x) k
         y <- g ((>>= k) . h)
         h y
     {-# INLINE (>>=) #-}
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (SelectT r m) where
     fail msg = lift (Fail.fail msg)
     {-# INLINE fail #-}
-#endif
 
 instance (MonadPlus m) => MonadPlus (SelectT r m) where
     mzero = SelectT (const mzero)

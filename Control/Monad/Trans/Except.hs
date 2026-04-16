@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Except
@@ -56,26 +51,18 @@ import Control.Monad.IO.Class
 import Control.Monad.Signatures
 import Control.Monad.Trans.Class
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Foldable (Foldable(foldMap))
 import Data.Monoid (Monoid(mempty, mappend))
 import Data.Traversable (Traversable(traverse))
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -132,10 +119,8 @@ withExcept = withExceptT
 -- value, while @>>=@ sequences two subcomputations, exiting on the
 -- first exception.
 newtype ExceptT e m a = ExceptT { runExceptT :: m (Either e a) }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq e, Eq1 m) => Eq1 (ExceptT e m) where
@@ -225,26 +210,16 @@ instance (Functor m, Monad m, Monoid e) => Alternative (ExceptT e m) where
     {-# INLINEABLE (<|>) #-}
 
 instance (Monad m) => Monad (ExceptT e m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = ExceptT $ return (Right a)
-    {-# INLINE return #-}
-#endif
     m >>= k = ExceptT $ do
         a <- runExceptT m
         case a of
             Left e -> return (Left e)
             Right x -> runExceptT (k x)
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail = ExceptT . fail
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (ExceptT e m) where
     fail = ExceptT . Fail.fail
     {-# INLINE fail #-}
-#endif
 
 instance (Monad m, Monoid e) => MonadPlus (ExceptT e m) where
     mzero = ExceptT $ return (Left mempty)
@@ -269,17 +244,13 @@ instance (MonadIO m) => MonadIO (ExceptT e m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (MonadZip m) => MonadZip (ExceptT e m) where
     mzipWith f (ExceptT a) (ExceptT b) = ExceptT $ mzipWith (liftA2 f) a b
     {-# INLINE mzipWith #-}
-#endif
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (ExceptT e m) where
     contramap f = ExceptT . contramap (fmap f) . runExceptT
     {-# INLINE contramap #-}
-#endif
 
 -- | Signal an exception value @e@.
 --

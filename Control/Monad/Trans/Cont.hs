@@ -1,14 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Cont
@@ -53,13 +46,9 @@ import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 import Data.Functor.Identity
 
-#if !(MIN_VERSION_base(4,8,0))
 import Control.Applicative
-#endif
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -142,7 +131,7 @@ shift f = shiftT (f . (runIdentity .))
 --
 -- @ContT r m@ is strict if and only if @m@ is.
 newtype ContT r m a = ContT { runContT :: (a -> m r) -> m r }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 
@@ -185,18 +174,12 @@ instance Applicative (ContT r m) where
     {-# INLINE (*>) #-}
 
 instance Monad (ContT r m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return x = ContT ($ x)
-    {-# INLINE return #-}
-#endif
     m >>= k  = ContT $ \ c -> runContT m (\ x -> runContT (k x) c)
     {-# INLINE (>>=) #-}
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (ContT r m) where
     fail msg = ContT $ \ _ -> Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance MonadTrans (ContT r) where
     lift m = ContT (m >>=)

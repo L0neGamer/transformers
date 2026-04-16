@@ -1,14 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Identity
@@ -40,34 +33,24 @@ import Control.Monad.Trans.Class (MonadTrans(lift))
 import Data.Foldable1 (Foldable1(foldMap1))
 #endif
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Control.Applicative
 import Control.Monad (MonadPlus(mzero, mplus))
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix (MonadFix(mfix))
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
 import Data.Foldable
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Traversable (Traversable(traverse))
-#endif
 import Prelude hiding (foldr, foldr1, foldl, foldl1, null, length)
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
 -- | The trivial monad transformer, which maps a monad to an equivalent monad.
 newtype IdentityT f a = IdentityT { runIdentityT :: f a }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 f) => Eq1 (IdentityT f) where
@@ -106,10 +89,8 @@ instance (Foldable f) => Foldable (IdentityT f) where
     {-# INLINE foldr1 #-}
     foldl1 f (IdentityT t) = foldl1 f t
     {-# INLINE foldl1 #-}
-#if MIN_VERSION_base(4,8,0)
     null (IdentityT t) = null t
     length (IdentityT t) = length t
-#endif
 
 #if MIN_VERSION_base(4,18,0)
 instance (Foldable1 m) => Foldable1 (IdentityT m) where
@@ -138,22 +119,12 @@ instance (Alternative m) => Alternative (IdentityT m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (IdentityT m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return = IdentityT . return
-    {-# INLINE return #-}
-#endif
     m >>= k = IdentityT $ runIdentityT . k =<< runIdentityT m
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = IdentityT $ fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (IdentityT m) where
     fail msg = IdentityT $ Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (MonadPlus m) => MonadPlus (IdentityT m) where
     mzero = IdentityT mzero
@@ -169,21 +140,17 @@ instance (MonadIO m) => MonadIO (IdentityT m) where
     liftIO = IdentityT . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (MonadZip m) => MonadZip (IdentityT m) where
     mzipWith f = lift2IdentityT (mzipWith f)
     {-# INLINE mzipWith #-}
-#endif
 
 instance MonadTrans IdentityT where
     lift = IdentityT
     {-# INLINE lift #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance (Contravariant f) => Contravariant (IdentityT f) where
     contramap f = IdentityT . contramap f . runIdentityT
     {-# INLINE contramap #-}
-#endif
 
 -- | Lift a unary operation to the new monad.
 mapIdentityT :: (m a -> n b) -> IdentityT m a -> IdentityT n b

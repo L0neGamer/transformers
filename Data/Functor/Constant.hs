@@ -1,17 +1,10 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 800
+#ifdef __GLASGOW_HASKELL__
 {-# LANGUAGE DeriveDataTypeable #-}
 #endif
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Functor.Constant
@@ -25,49 +18,37 @@
 -- The constant functor.
 -----------------------------------------------------------------------------
 
-module Data.Functor.Constant {-# DEPRECATED "Use Data.Functor.Const" #-} (
+module Data.Functor.Constant {-# DEPRECATED "Use Data.Functor.Const; will be removed in transformers 0.8" #-} (
     Constant(..),
   ) where
 
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Control.Applicative
 import Data.Foldable
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Monoid (Monoid(..))
 import Data.Traversable (Traversable(traverse))
-#endif
-#if MIN_VERSION_base(4,8,0)
 import Data.Bifunctor (Bifunctor(..))
-#endif
-#if (MIN_VERSION_base(4,9,0)) && !(MIN_VERSION_base(4,11,0))
 import Data.Semigroup (Semigroup((<>)))
-#endif
-#if MIN_VERSION_base(4,10,0)
 import Data.Bifoldable (Bifoldable(..))
 import Data.Bitraversable (Bitraversable(..))
-#endif
 import Prelude hiding (null, length)
-#if __GLASGOW_HASKELL__ >= 800
+#ifdef __GLASGOW_HASKELL__
 import Data.Data
 #endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
 -- | Constant functor.
 newtype Constant a b = Constant { getConstant :: a }
     deriving (Eq, Ord
-#if __GLASGOW_HASKELL__ >= 800
+#ifdef __GLASGOW_HASKELL__
         , Data
 #endif
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef __GLASGOW_HASKELL__
         , Generic, Generic1
-#elif __GLASGOW_HASKELL__ >= 704
-        , Generic
 #endif
         )
 
@@ -118,20 +99,16 @@ instance Functor (Constant a) where
 instance Foldable (Constant a) where
     foldMap _ (Constant _) = mempty
     {-# INLINE foldMap #-}
-#if MIN_VERSION_base(4,8,0)
     null (Constant _) = True
     length (Constant _) = 0
-#endif
 
 instance Traversable (Constant a) where
     traverse _ (Constant x) = pure (Constant x)
     {-# INLINE traverse #-}
 
-#if MIN_VERSION_base(4,9,0)
 instance (Semigroup a) => Semigroup (Constant a b) where
     Constant x <> Constant y = Constant (x <> y)
     {-# INLINE (<>) #-}
-#endif
 
 instance (Monoid a) => Applicative (Constant a) where
     pure _ = Constant mempty
@@ -142,21 +119,13 @@ instance (Monoid a) => Applicative (Constant a) where
 instance (Monoid a) => Monoid (Constant a b) where
     mempty = Constant mempty
     {-# INLINE mempty #-}
-#if !MIN_VERSION_base(4,11,0)
-    -- From base-4.11, Monoid(mappend) defaults to Semigroup((<>))
-    Constant x `mappend` Constant y = Constant (x `mappend` y)
-    {-# INLINE mappend #-}
-#endif
 
-#if MIN_VERSION_base(4,8,0)
 instance Bifunctor Constant where
     first f (Constant x) = Constant (f x)
     {-# INLINE first #-}
     second _ (Constant x) = Constant x
     {-# INLINE second #-}
-#endif
 
-#if MIN_VERSION_base(4,10,0)
 instance Bifoldable Constant where
     bifoldMap f _ (Constant a) = f a
     {-# INLINE bifoldMap #-}
@@ -164,10 +133,7 @@ instance Bifoldable Constant where
 instance Bitraversable Constant where
     bitraverse f _ (Constant a) = Constant <$> f a
     {-# INLINE bitraverse #-}
-#endif
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant (Constant a) where
     contramap _ (Constant a) = Constant a
     {-# INLINE contramap #-}
-#endif

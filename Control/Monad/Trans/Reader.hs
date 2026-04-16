@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Reader
@@ -47,27 +42,16 @@ module Control.Monad.Trans.Reader (
 import Control.Monad.IO.Class
 import Control.Monad.Signatures
 import Control.Monad.Trans.Class
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
-#if !(MIN_VERSION_base(4,6,0))
-import Control.Monad.Instances ()  -- deprecated from base-4.6
-#endif
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
-#if (MIN_VERSION_base(4,2,0)) && !(MIN_VERSION_base(4,8,0))
 import Data.Functor ((<$))
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -125,10 +109,8 @@ withReader = withReaderT
 --
 -- @ReaderT r m@ is strict if and only if @m@ is.
 newtype ReaderT r m a = ReaderT { runReaderT :: r -> m a }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 -- | Transform the computation inside a @ReaderT@.
@@ -152,26 +134,20 @@ withReaderT f m = ReaderT $ runReaderT m . f
 instance (Functor m) => Functor (ReaderT r m) where
     fmap f  = mapReaderT (fmap f)
     {-# INLINE fmap #-}
-#if MIN_VERSION_base(4,2,0)
     x <$ v = mapReaderT (x <$) v
     {-# INLINE (<$) #-}
-#endif
 
 instance (Applicative m) => Applicative (ReaderT r m) where
     pure    = liftReaderT . pure
     {-# INLINE pure #-}
     f <*> v = ReaderT $ \ r -> runReaderT f r <*> runReaderT v r
     {-# INLINE (<*>) #-}
-#if MIN_VERSION_base(4,2,0)
     u *> v = ReaderT $ \ r -> runReaderT u r *> runReaderT v r
     {-# INLINE (*>) #-}
     u <* v = ReaderT $ \ r -> runReaderT u r <* runReaderT v r
     {-# INLINE (<*) #-}
-#endif
-#if MIN_VERSION_base(4,10,0)
     liftA2 f x y = ReaderT $ \ r -> liftA2 f (runReaderT x r) (runReaderT y r)
     {-# INLINE liftA2 #-}
-#endif
 
 instance (Alternative m) => Alternative (ReaderT r m) where
     empty   = liftReaderT empty
@@ -180,30 +156,16 @@ instance (Alternative m) => Alternative (ReaderT r m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (ReaderT r m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return   = lift . return
-    {-# INLINE return #-}
-#endif
     m >>= k  = ReaderT $ \ r -> do
         a <- runReaderT m r
         runReaderT (k a) r
     {-# INLINE (>>=) #-}
-#if MIN_VERSION_base(4,8,0)
     (>>) = (*>)
-#else
-    m >> k = ReaderT $ \ r -> runReaderT m r >> runReaderT k r
-#endif
     {-# INLINE (>>) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = lift (fail msg)
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (ReaderT r m) where
     fail msg = lift (Fail.fail msg)
     {-# INLINE fail #-}
-#endif
 
 instance (MonadPlus m) => MonadPlus (ReaderT r m) where
     mzero       = lift mzero
@@ -223,18 +185,14 @@ instance (MonadIO m) => MonadIO (ReaderT r m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (MonadZip m) => MonadZip (ReaderT r m) where
     mzipWith f (ReaderT m) (ReaderT n) = ReaderT $ \ a ->
         mzipWith f (m a) (n a)
     {-# INLINE mzipWith #-}
-#endif
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (ReaderT r m) where
     contramap f = ReaderT . fmap (contramap f) . runReaderT
     {-# INLINE contramap #-}
-#endif
 
 liftReaderT :: m a -> ReaderT r m a
 liftReaderT m = ReaderT (const m)

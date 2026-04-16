@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.RWS.Lazy
@@ -66,21 +61,15 @@ module Control.Monad.Trans.RWS.Lazy (
 import Control.Monad.IO.Class
 import Control.Monad.Signatures
 import Control.Monad.Trans.Class
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
-#if !(MIN_VERSION_base(4,8,0))
 import Data.Monoid
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -143,7 +132,7 @@ withRWS = withRWST
 -- collecting an output of type @w@ and updating a state of type @s@
 -- to an inner monad @m@.
 newtype RWST r w s m a = RWST { runRWST :: r -> s -> m (a, s, w) }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 -- | Evaluate a computation with the given initial state and environment,
@@ -206,25 +195,15 @@ instance (Monoid w, Functor m, MonadPlus m) => Alternative (RWST r w s m) where
     {-# INLINE (<|>) #-}
 
 instance (Monoid w, Monad m) => Monad (RWST r w s m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = RWST $ \ _ s -> return (a, s, mempty)
-    {-# INLINE return #-}
-#endif
     m >>= k  = RWST $ \ r s -> do
         ~(a, s', w)  <- runRWST m r s
         ~(b, s'',w') <- runRWST (k a) r s'
         return (b, s'', w `mappend` w')
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = RWST $ \ _ _ -> fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Monoid w, Fail.MonadFail m) => Fail.MonadFail (RWST r w s m) where
     fail msg = RWST $ \ _ _ -> Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (Monoid w, MonadPlus m) => MonadPlus (RWST r w s m) where
     mzero = RWST $ \ _ _ -> mzero
@@ -246,12 +225,10 @@ instance (Monoid w, MonadIO m) => MonadIO (RWST r w s m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (RWST r w s m) where
     contramap f m = RWST $ \r s ->
       contramap (\ ~(a, s', w) -> (f a, s', w)) $ runRWST m r s
     {-# INLINE contramap #-}
-#endif
 
 -- ---------------------------------------------------------------------------
 -- Reader operations

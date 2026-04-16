@@ -1,14 +1,7 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 706
 {-# LANGUAGE PolyKinds #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.Functor.Reverse
@@ -32,32 +25,24 @@ import Control.Applicative.Backwards
 import Data.Foldable1 (Foldable1(foldMap1))
 #endif
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Prelude hiding (foldr, foldr1, foldl, foldl1, null, length)
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Data.Foldable
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Traversable (Traversable(traverse))
-#endif
 import Data.Monoid
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
 -- | The same functor, but with 'Foldable' and 'Traversable' instances
 -- that process the elements in the reverse order.
 newtype Reverse f a = Reverse { getReverse :: f a }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 f) => Eq1 (Reverse f) where
@@ -102,22 +87,12 @@ instance (Alternative f) => Alternative (Reverse f) where
 
 -- | Derived instance.
 instance (Monad m) => Monad (Reverse m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = Reverse (return a)
-    {-# INLINE return #-}
-#endif
     m >>= f = Reverse (getReverse m >>= getReverse . f)
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = Reverse (fail msg)
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (Reverse m) where
     fail msg = Reverse (Fail.fail msg)
     {-# INLINE fail #-}
-#endif
 
 -- | Derived instance.
 instance (MonadPlus m) => MonadPlus (Reverse m) where
@@ -138,10 +113,8 @@ instance (Foldable f) => Foldable (Reverse f) where
     {-# INLINE foldr1 #-}
     foldl1 f (Reverse t) = foldr1 (flip f) t
     {-# INLINE foldl1 #-}
-#if MIN_VERSION_base(4,8,0)
     null (Reverse t) = null t
     length (Reverse t) = length t
-#endif
 
 #if MIN_VERSION_base(4,18,0)
 -- | Fold from right to left.
@@ -155,9 +128,7 @@ instance (Traversable f) => Traversable (Reverse f) where
         fmap Reverse . forwards $ traverse (Backwards . f) t
     {-# INLINE traverse #-}
 
-#if MIN_VERSION_base(4,12,0)
 -- | Derived instance.
 instance (Contravariant f) => Contravariant (Reverse f) where
     contramap f = Reverse . contramap f . getReverse
     {-# INLINE contramap #-}
-#endif

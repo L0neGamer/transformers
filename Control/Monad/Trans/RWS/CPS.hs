@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.RWS.CPS
@@ -76,14 +71,10 @@ import Control.Monad.Trans.Class
 import Control.Monad.Signatures
 import Data.Functor.Identity
 
-#if !(MIN_VERSION_base(4,8,0))
 import Data.Monoid
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -149,7 +140,7 @@ withRWS = withRWST
 -- collecting an output of type @w@ and updating a state of type @s@
 -- to an inner monad @m@.
 newtype RWST r w s m a = RWST { unRWST :: r -> s -> w -> m (a, s, w) }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 
@@ -232,26 +223,15 @@ instance (Functor m, MonadPlus m) => Alternative (RWST r w s m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (RWST r w s m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = RWST $ \ _ s w -> return (a, s, w)
-    {-# INLINE return #-}
-#endif
-
     m >>= k = RWST $ \ r s w -> do
         (a, s', w')    <- unRWST m r s w
         unRWST (k a) r s' w'
     {-# INLINE (>>=) #-}
 
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = RWST $ \ _ _ _ -> fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (RWST r w s m) where
     fail msg = RWST $ \ _ _ _ -> Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (Functor m, MonadPlus m) => MonadPlus (RWST r w s m) where
     mzero = empty

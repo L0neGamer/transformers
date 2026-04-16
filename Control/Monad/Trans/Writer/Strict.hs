@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Writer.Strict
@@ -56,28 +51,20 @@ module Control.Monad.Trans.Writer.Strict (
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Class
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
 import Control.Monad.Signatures
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
 import Data.Foldable
 import Data.Monoid
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Traversable (Traversable(traverse))
-#endif
 import Prelude hiding (null, length)
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -133,7 +120,7 @@ mapWriter f = mapWriterT (Identity . f . runIdentity)
 -- <<images/bind-WriterT.svg>>
 --
 newtype WriterT w m a = WriterT { runWriterT :: m (a, w) }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 
@@ -191,10 +178,8 @@ instance (Functor m) => Functor (WriterT w m) where
 instance (Foldable f) => Foldable (WriterT w f) where
     foldMap f = foldMap (f . fst) . runWriterT
     {-# INLINE foldMap #-}
-#if MIN_VERSION_base(4,8,0)
     null (WriterT t) = null t
     length (WriterT t) = length t
-#endif
 
 instance (Traversable f) => Traversable (WriterT w f) where
     traverse f = fmap WriterT . traverse f' . runWriterT where
@@ -215,25 +200,15 @@ instance (Monoid w, Alternative m) => Alternative (WriterT w m) where
     {-# INLINE (<|>) #-}
 
 instance (Monoid w, Monad m) => Monad (WriterT w m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = writer (a, mempty)
-    {-# INLINE return #-}
-#endif
     m >>= k  = WriterT $ do
         (a, w)  <- runWriterT m
         (b, w') <- runWriterT (k a)
         return (b, w `mappend` w')
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = WriterT $ fail msg
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Monoid w, Fail.MonadFail m) => Fail.MonadFail (WriterT w m) where
     fail msg = WriterT $ Fail.fail msg
     {-# INLINE fail #-}
-#endif
 
 instance (Monoid w, MonadPlus m) => MonadPlus (WriterT w m) where
     mzero       = WriterT mzero
@@ -255,18 +230,14 @@ instance (Monoid w, MonadIO m) => MonadIO (WriterT w m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (Monoid w, MonadZip m) => MonadZip (WriterT w m) where
     mzipWith f (WriterT x) (WriterT y) = WriterT $
         mzipWith (\ (a, w) (b, w') -> (f a b, w `mappend` w')) x y
     {-# INLINE mzipWith #-}
-#endif
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (WriterT w m) where
     contramap f = mapWriterT $ contramap $ \ (a, w) -> (f a, w)
     {-# INLINE contramap #-}
-#endif
 
 -- | @'tell' w@ is an action that produces the output @w@.
 tell :: (Monad m) => w -> WriterT w m ()

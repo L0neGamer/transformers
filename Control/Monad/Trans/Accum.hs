@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Accum
@@ -64,15 +59,11 @@ import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
 import Control.Monad.Signatures
-#if !MIN_VERSION_base(4,8,0)
 import Data.Monoid
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -156,7 +147,7 @@ newtype AccumT w m a = AccumT {
     -- the sum of all arguments to calls of 'add' executed by the action.
     runAccumT :: w -> m (a, w)
     }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 
@@ -207,25 +198,15 @@ instance (Monoid w, Functor m, MonadPlus m) => Alternative (AccumT w m) where
     {-# INLINE (<|>) #-}
 
 instance (Monoid w, Functor m, Monad m) => Monad (AccumT w m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a  = AccumT $ const $ return (a, mempty)
-    {-# INLINE return #-}
-#endif
     m >>= k  = AccumT $ \ w -> do
         ~(a, w')  <- runAccumT m w
         ~(b, w'') <- runAccumT (k a) (w `mappend` w')
         return (b, w' `mappend` w'')
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail msg = AccumT $ const (fail msg)
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Monoid w, Fail.MonadFail m) => Fail.MonadFail (AccumT w m) where
     fail msg = AccumT $ const (Fail.fail msg)
     {-# INLINE fail #-}
-#endif
 
 instance (Monoid w, Functor m, MonadPlus m) => MonadPlus (AccumT w m) where
     mzero       = AccumT $ const mzero

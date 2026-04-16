@@ -1,13 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 806
 {-# LANGUAGE QuantifiedConstraints #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Class
@@ -74,15 +67,7 @@ module Control.Monad.Trans.Class (
 --
 -- to be reported as ambiguous.  For transformers 0.6 and later, this can
 -- be fixed by removing the second constraint, which is implied by the first.
-#if __GLASGOW_HASKELL__ >= 806
 class (forall m. Monad m => Monad (t m)) => MonadTrans t where
-#else
--- Prior to GHC 8.8 (base-4.13), the Monad class included fail.
--- GHC 8.6 (base-4.12) has MonadFailDesugaring on by default, so there
--- is no need for users defining monad transformers to define fail in
--- the Monad instance of the transformed monad.
-class MonadTrans t where
-#endif
     -- | Lift a computation from the argument monad to the constructed monad.
     lift :: (Monad m) => m a -> t m a
 

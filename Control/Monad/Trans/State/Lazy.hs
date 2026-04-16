@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.State.Lazy
@@ -82,18 +77,14 @@ import Control.Monad.IO.Class
 import Control.Monad.Signatures
 import Control.Monad.Trans.Class
 import qualified Control.Monad.Trans.State.Strict as Strict
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 import Data.Functor.Identity
 
 import Control.Applicative
 import Control.Monad
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -168,7 +159,7 @@ withState = withStateT
 -- the final state of the first computation as the initial state of
 -- the second.
 newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic)
 #endif
 
@@ -231,24 +222,14 @@ instance (Functor m, MonadPlus m) => Alternative (StateT s m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (StateT s m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return a = StateT $ \ s -> return (a, s)
-    {-# INLINE return #-}
-#endif
     m >>= k  = StateT $ \ s -> do
         ~(a, s') <- runStateT m s
         runStateT (k a) s'
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail str = StateT $ \ _ -> fail str
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Fail.MonadFail m) => Fail.MonadFail (StateT s m) where
     fail str = StateT $ \ _ -> Fail.fail str
     {-# INLINE fail #-}
-#endif
 
 instance (MonadPlus m) => MonadPlus (StateT s m) where
     mzero       = StateT $ \ _ -> mzero
@@ -270,12 +251,10 @@ instance (MonadIO m) => MonadIO (StateT s m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (StateT s m) where
     contramap f m = StateT $ \s ->
       contramap (\ ~(a, s') -> (f a, s')) $ runStateT m s
     {-# INLINE contramap #-}
-#endif
 
 -- | Fetch the current value of the state within the monad.
 get :: (Monad m) => StateT s m s

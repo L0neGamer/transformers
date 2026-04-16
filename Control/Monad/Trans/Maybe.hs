@@ -1,11 +1,6 @@
 {-# LANGUAGE CPP #-}
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE DeriveGeneric #-}
-#endif
-#if __GLASGOW_HASKELL__ >= 710 && __GLASGOW_HASKELL__ < 802
-{-# LANGUAGE AutoDeriveTypeable #-}
-#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Maybe
@@ -47,25 +42,17 @@ import Control.Monad.Signatures
 import Control.Monad.Trans.Class
 import Control.Monad.Trans.Except (ExceptT(..))
 import Data.Functor.Classes
-#if MIN_VERSION_base(4,12,0)
 import Data.Functor.Contravariant
-#endif
 
 import Control.Applicative
 import Control.Monad (MonadPlus(mzero, mplus), liftM)
-#if MIN_VERSION_base(4,9,0)
 import qualified Control.Monad.Fail as Fail
-#endif
 import Control.Monad.Fix (MonadFix(mfix))
-#if MIN_VERSION_base(4,4,0)
 import Control.Monad.Zip (MonadZip(mzipWith))
-#endif
 import Data.Maybe (fromMaybe)
-#if !(MIN_VERSION_base(4,8,0)) || defined(__MHS__)
 import Data.Foldable (Foldable(foldMap))
 import Data.Traversable (Traversable(traverse))
-#endif
-#if __GLASGOW_HASKELL__ >= 704
+#ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
 
@@ -78,10 +65,8 @@ import GHC.Generics
 -- value, while @>>=@ sequences two subcomputations, exiting if either
 -- computation does.
 newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
-#if __GLASGOW_HASKELL__ >= 710
+#ifdef __GLASGOW_HASKELL__
     deriving (Generic, Generic1)
-#elif __GLASGOW_HASKELL__ >= 704
-    deriving (Generic)
 #endif
 
 instance (Eq1 m) => Eq1 (MaybeT m) where
@@ -173,26 +158,16 @@ instance (Functor m, Monad m) => Alternative (MaybeT m) where
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (MaybeT m) where
-#if !(MIN_VERSION_base(4,8,0))
-    return = MaybeT . return . Just
-    {-# INLINE return #-}
-#endif
     x >>= f = MaybeT $ do
         v <- runMaybeT x
         case v of
             Nothing -> return Nothing
             Just y  -> runMaybeT (f y)
     {-# INLINE (>>=) #-}
-#if !(MIN_VERSION_base(4,13,0))
-    fail _ = MaybeT (return Nothing)
-    {-# INLINE fail #-}
-#endif
 
-#if MIN_VERSION_base(4,9,0)
 instance (Monad m) => Fail.MonadFail (MaybeT m) where
     fail _ = MaybeT (return Nothing)
     {-# INLINE fail #-}
-#endif
 
 instance (Monad m) => MonadPlus (MaybeT m) where
     mzero = MaybeT (return Nothing)
@@ -217,17 +192,13 @@ instance (MonadIO m) => MonadIO (MaybeT m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
-#if MIN_VERSION_base(4,4,0)
 instance (MonadZip m) => MonadZip (MaybeT m) where
     mzipWith f (MaybeT a) (MaybeT b) = MaybeT $ mzipWith (liftA2 f) a b
     {-# INLINE mzipWith #-}
-#endif
 
-#if MIN_VERSION_base(4,12,0)
 instance Contravariant m => Contravariant (MaybeT m) where
     contramap f = MaybeT . contramap (fmap f) . runMaybeT
     {-# INLINE contramap #-}
-#endif
 
 -- | Lift a @callCC@ operation to the new monad.
 liftCallCC :: CallCC m (Maybe a) (Maybe b) -> CallCC (MaybeT m) a b
