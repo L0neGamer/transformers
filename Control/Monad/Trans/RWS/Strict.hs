@@ -71,7 +71,6 @@ import Control.Applicative
 import Control.Monad
 import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
-import Data.Monoid
 #ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif

@@ -57,8 +57,6 @@ import Control.Monad.Trans.Class
 import Control.Monad.Signatures
 import Data.Functor.Identity
 
-import Data.Monoid
-
 import qualified Control.Monad.Fail as Fail
 #ifdef __GLASGOW_HASKELL__
 import GHC.Generics

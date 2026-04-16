@@ -27,10 +27,7 @@ import Data.Functor.Contravariant
 
 import Control.Applicative
 import Data.Foldable
-import Data.Monoid (Monoid(..))
-import Data.Traversable (Traversable(traverse))
 import Data.Bifunctor (Bifunctor(..))
-import Data.Semigroup (Semigroup((<>)))
 import Data.Bifoldable (Bifoldable(..))
 import Data.Bitraversable (Bitraversable(..))
 import Prelude hiding (null, length)
