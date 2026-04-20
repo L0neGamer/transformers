@@ -71,7 +71,6 @@ import Control.Applicative
 import Control.Monad
 import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
-import Data.Monoid
 #ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
@@ -183,7 +182,7 @@ instance (Functor m) => Functor (RWST r w s m) where
         fmap (\ (a, s', w) -> (f a, s', w)) $ runRWST m r s
     {-# INLINE fmap #-}
 
-instance (Monoid w, Functor m, Monad m) => Applicative (RWST r w s m) where
+instance (Monoid w, Monad m) => Applicative (RWST r w s m) where
     pure a = RWST $ \ _ s -> return (a, s, mempty)
     {-# INLINE pure #-}
     RWST mf <*> RWST mx = RWST $ \ r s -> do
@@ -192,7 +191,7 @@ instance (Monoid w, Functor m, Monad m) => Applicative (RWST r w s m) where
         return (f x, s'', w `mappend` w')
     {-# INLINE (<*>) #-}
 
-instance (Monoid w, Functor m, MonadPlus m) => Alternative (RWST r w s m) where
+instance (Monoid w, MonadPlus m) => Alternative (RWST r w s m) where
     empty = RWST $ \ _ _ -> mzero
     {-# INLINE empty #-}
     RWST m <|> RWST n = RWST $ \ r s -> m r s `mplus` n r s

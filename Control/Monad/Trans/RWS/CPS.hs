@@ -71,8 +71,6 @@ import Control.Monad.Trans.Class
 import Control.Monad.Signatures
 import Data.Functor.Identity
 
-import Data.Monoid
-
 import qualified Control.Monad.Fail as Fail
 #ifdef __GLASGOW_HASKELL__
 import GHC.Generics
@@ -205,7 +203,7 @@ instance (Functor m) => Functor (RWST r w s m) where
     fmap f m = RWST $ \ r s w -> (\ (a, s', w') -> (f a, s', w')) <$> unRWST m r s w
     {-# INLINE fmap #-}
 
-instance (Functor m, Monad m) => Applicative (RWST r w s m) where
+instance (Monad m) => Applicative (RWST r w s m) where
     pure a = RWST $ \ _ s w -> return (a, s, w)
     {-# INLINE pure #-}
 
@@ -215,7 +213,7 @@ instance (Functor m, Monad m) => Applicative (RWST r w s m) where
         return (f x, s'', w'')
     {-# INLINE (<*>) #-}
 
-instance (Functor m, MonadPlus m) => Alternative (RWST r w s m) where
+instance (MonadPlus m) => Alternative (RWST r w s m) where
     empty = RWST $ \ _ _ _ -> mzero
     {-# INLINE empty #-}
 
@@ -233,7 +231,7 @@ instance (Fail.MonadFail m) => Fail.MonadFail (RWST r w s m) where
     fail msg = RWST $ \ _ _ _ -> Fail.fail msg
     {-# INLINE fail #-}
 
-instance (Functor m, MonadPlus m) => MonadPlus (RWST r w s m) where
+instance (MonadPlus m) => MonadPlus (RWST r w s m) where
     mzero = empty
     {-# INLINE mzero #-}
     mplus = (<|>)

@@ -60,7 +60,6 @@ import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
 import Control.Monad.Zip (MonadZip(mzipWith))
 import Data.Foldable (Foldable(foldMap))
-import Data.Monoid (Monoid(mempty, mappend))
 import Data.Traversable (Traversable(traverse))
 #ifdef __GLASGOW_HASKELL__
 import GHC.Generics
@@ -183,7 +182,7 @@ instance (Traversable f) => Traversable (ExceptT e f) where
         ExceptT <$> traverse (either (pure . Left) (fmap Right . f)) a
     {-# INLINE traverse #-}
 
-instance (Functor m, Monad m) => Applicative (ExceptT e m) where
+instance (Monad m) => Applicative (ExceptT e m) where
     pure a = ExceptT $ return (Right a)
     {-# INLINE pure #-}
     ExceptT f <*> ExceptT v = ExceptT $ do
@@ -199,7 +198,7 @@ instance (Functor m, Monad m) => Applicative (ExceptT e m) where
     m *> k = m >>= \_ -> k
     {-# INLINE (*>) #-}
 
-instance (Functor m, Monad m, Monoid e) => Alternative (ExceptT e m) where
+instance (Monad m, Monoid e) => Alternative (ExceptT e m) where
     empty = ExceptT $ return (Left mempty)
     {-# INLINE empty #-}
     ExceptT mx <|> ExceptT my = ExceptT $ do

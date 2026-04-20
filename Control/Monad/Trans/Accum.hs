@@ -62,7 +62,6 @@ import Control.Monad
 import qualified Control.Monad.Fail as Fail
 import Control.Monad.Fix
 import Control.Monad.Signatures
-import Data.Monoid
 #ifdef __GLASGOW_HASKELL__
 import GHC.Generics
 #endif
@@ -106,7 +105,7 @@ execAccum m w = snd (runAccum m w)
 -- and return the final value, discarding the final output.
 --
 -- * @'evalAccum' m w = 'fst' ('runAccum' m w)@
-evalAccum :: (Monoid w) => Accum w a -> w -> a
+evalAccum :: Accum w a -> w -> a
 evalAccum m w = fst (runAccum m w)
 {-# INLINE evalAccum #-}
 
@@ -164,7 +163,7 @@ execAccumT m w = do
 -- history and return the final value, discarding the final output.
 --
 -- * @'evalAccumT' m w = 'liftM' 'fst' ('runAccumT' m w)@
-evalAccumT :: (Monad m, Monoid w) => AccumT w m a -> w -> m a
+evalAccumT :: (Monad m) => AccumT w m a -> w -> m a
 evalAccumT m w = do
     ~(a, _) <- runAccumT m w
     return a
@@ -182,7 +181,7 @@ instance (Functor m) => Functor (AccumT w m) where
     fmap f = mapAccumT $ fmap $ \ ~(a, w) -> (f a, w)
     {-# INLINE fmap #-}
 
-instance (Monoid w, Functor m, Monad m) => Applicative (AccumT w m) where
+instance (Monoid w, Monad m) => Applicative (AccumT w m) where
     pure a  = AccumT $ const $ return (a, mempty)
     {-# INLINE pure #-}
     mf <*> mv = AccumT $ \ w -> do
@@ -191,13 +190,13 @@ instance (Monoid w, Functor m, Monad m) => Applicative (AccumT w m) where
       return (f v, w' `mappend` w'')
     {-# INLINE (<*>) #-}
 
-instance (Monoid w, Functor m, MonadPlus m) => Alternative (AccumT w m) where
+instance (Monoid w, MonadPlus m) => Alternative (AccumT w m) where
     empty   = AccumT $ const mzero
     {-# INLINE empty #-}
     m <|> n = AccumT $ \ w -> runAccumT m w `mplus` runAccumT n w
     {-# INLINE (<|>) #-}
 
-instance (Monoid w, Functor m, Monad m) => Monad (AccumT w m) where
+instance (Monoid w, Monad m) => Monad (AccumT w m) where
     m >>= k  = AccumT $ \ w -> do
         ~(a, w')  <- runAccumT m w
         ~(b, w'') <- runAccumT (k a) (w `mappend` w')
@@ -208,13 +207,13 @@ instance (Monoid w, Fail.MonadFail m) => Fail.MonadFail (AccumT w m) where
     fail msg = AccumT $ const (Fail.fail msg)
     {-# INLINE fail #-}
 
-instance (Monoid w, Functor m, MonadPlus m) => MonadPlus (AccumT w m) where
+instance (Monoid w, MonadPlus m) => MonadPlus (AccumT w m) where
     mzero       = AccumT $ const mzero
     {-# INLINE mzero #-}
     m `mplus` n = AccumT $ \ w -> runAccumT m w `mplus` runAccumT n w
     {-# INLINE mplus #-}
 
-instance (Monoid w, Functor m, MonadFix m) => MonadFix (AccumT w m) where
+instance (Monoid w, MonadFix m) => MonadFix (AccumT w m) where
     mfix m = AccumT $ \ w -> mfix $ \ ~(a, _) -> runAccumT (m a) w
     {-# INLINE mfix #-}
 
@@ -224,7 +223,7 @@ instance (Monoid w) => MonadTrans (AccumT w) where
         return (a, mempty)
     {-# INLINE lift #-}
 
-instance (Monoid w, Functor m, MonadIO m) => MonadIO (AccumT w m) where
+instance (Monoid w, MonadIO m) => MonadIO (AccumT w m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}
 
