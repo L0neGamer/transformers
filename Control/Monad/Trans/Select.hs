@@ -109,9 +109,9 @@ instance (Monad m) => Applicative (SelectT r m) where
     {-# INLINE (*>) #-}
 
 instance (Alternative m, Monad m) => Alternative (SelectT r m) where
-    empty = empty
+    empty = SelectT (const empty)
     {-# INLINE empty #-}
-    (<|>) = (<|>)
+    (<|>) (SelectT f) (SelectT g) = SelectT $ \k -> f k <|> g k
     {-# INLINE (<|>) #-}
 
 instance (Monad m) => Monad (SelectT r m) where
