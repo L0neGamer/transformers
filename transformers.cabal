@@ -46,7 +46,7 @@ tested-with:
   ghc ==9.14
   ghc ==9.2
   ghc ==9.8
-  mhs ==0.15
+  mhs ==0.16
 
 source-repository head
   type: git
@@ -63,6 +63,7 @@ library
     Control.Monad.Signatures
     Control.Monad.Trans.Accum
     Control.Monad.Trans.Class
+    Control.Monad.Trans.Compose
     Control.Monad.Trans.Cont
     Control.Monad.Trans.Except
     Control.Monad.Trans.Identity
@@ -82,3 +83,10 @@ library
     Control.Monad.Trans.Writer.Strict
     Data.Functor.Constant
     Data.Functor.Reverse
+
+test-suite ComposeT
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: ComposeT.hs
+  default-language: Haskell2010
+  build-depends: base, transformers
