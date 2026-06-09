@@ -180,6 +180,9 @@ instance MonadTrans (ReaderT r) where
     lift   = liftReaderT
     {-# INLINE lift #-}
 
+instance MonadTransUnder (ReaderT r) where
+    liftUnder transform (ReaderT f) = ReaderT $ \r -> transform (f r)
+
 instance (MonadIO m) => MonadIO (ReaderT r m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}

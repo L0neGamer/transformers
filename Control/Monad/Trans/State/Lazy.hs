@@ -252,6 +252,9 @@ instance MonadTrans (StateT s) where
         return (a, s)
     {-# INLINE lift #-}
 
+instance MonadTransUnder (StateT r) where
+    liftUnder transform (StateT f) = StateT $ \s -> transform (f s)
+
 instance (MonadIO m) => MonadIO (StateT s m) where
     liftIO = lift . liftIO
     {-# INLINE liftIO #-}

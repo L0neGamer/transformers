@@ -1,6 +1,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE Safe #-}
 {-# LANGUAGE QuantifiedConstraints #-}
+{-# LANGUAGE RankNTypes #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.Monad.Trans.Class
@@ -23,7 +24,9 @@
 
 module Control.Monad.Trans.Class (
     -- * Transformer class
-    MonadTrans(..)
+    MonadTrans(..),
+
+    MonadTransUnder (..)
 
     -- * Conventions
     -- $conventions
@@ -70,6 +73,9 @@ module Control.Monad.Trans.Class (
 class (forall m. Monad m => Monad (t m)) => MonadTrans t where
     -- | Lift a computation from the argument monad to the constructed monad.
     lift :: (Monad m) => m a -> t m a
+
+class MonadTrans t => MonadTransUnder t where
+  liftUnder :: (forall a . m a -> n a) -> t m b -> t n b
 
 {- $conventions
 All monad transformer modules except 'Control.Monad.Trans.Maybe'
